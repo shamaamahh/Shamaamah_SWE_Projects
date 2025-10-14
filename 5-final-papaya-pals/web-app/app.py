@@ -1,0 +1,82 @@
+"""This application provides the basis of the web app structure."""
+
+import streamlit as st  # pylint: disable=import-error
+from app_pages.games.slots_game.slots import play_slots
+from app_pages.games.roulette_game.roulette import play_roulette
+from app_pages.games.blackjack.main import play_blackjack
+from app_pages.games.wheel_game.wheel import play_wheel
+from app_pages.home import show_home
+from app_pages.login import show_login
+from app_pages.register import show_register
+from app_pages.initialize import set_default_session_vars, reset_to_default
+from app_pages.reload import show_reload
+
+
+# set session vars
+set_default_session_vars()
+
+
+# set page to "home"
+def load_homepage_cb():
+    """This callback function will get called when user presses the home button"""
+    reset_to_default(st.session_state.current_page)
+    st.session_state.current_page = "home"
+
+
+# set page to "login"
+def load_login_cb():
+    """This callback function will get called when user presses the login button"""
+    reset_to_default(st.session_state.current_page)
+    st.session_state.current_page = "login"
+
+
+# set page to "register"
+def load_register_cb():
+    """This callback function will get called when user presses the register button"""
+    reset_to_default(st.session_state.current_page)
+    st.session_state.current_page = "register"
+
+
+# log out
+def load_logout_cb():
+    """This callback function will get called when user presses the logout button"""
+    reset_to_default(st.session_state.current_page)
+    st.session_state.user = ""
+    st.session_state.current_page = "home"
+
+
+# show sidebar
+with st.sidebar:
+    st.title("Casino Menu 🎲")
+    if st.session_state.user:
+        st.write(f"Hi, **{st.session_state.user}**!")
+    st.button("Home", on_click=load_homepage_cb)
+    if st.session_state.user == "":
+        st.button("Login", on_click=load_login_cb)
+        st.button("Register", on_click=load_register_cb)
+    else:
+        st.button("Logout", on_click=load_logout_cb)
+
+# if bankroll is zero, redirect to reload page no matter what
+if st.session_state.bankroll == 0:
+    st.session_state.current_page = "reload"
+
+# load correct page
+if st.session_state.current_page == "slots":
+    play_slots()
+elif st.session_state.current_page == "blackjack":
+    play_blackjack()
+elif st.session_state.current_page == "home":
+    show_home()
+elif st.session_state.current_page == "roulette":
+    play_roulette()
+elif st.session_state.current_page == "wheel":
+    play_wheel()
+elif st.session_state.current_page == "login":
+    show_login()
+elif st.session_state.current_page == "register":
+    show_register()
+elif st.session_state.current_page == "reload":
+    show_reload()
+else:
+    raise ValueError("Unknown page request from st.session_state.current_page")

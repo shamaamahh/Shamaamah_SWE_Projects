@@ -1,0 +1,25 @@
+version: '3'
+services:
+  app:
+    build: ./web-app
+    ports:
+      - "8501:8501"
+    environment:
+      - MONGO_DBNAME=fruitcasino
+      - MONGO_URI=mongodb://admin:secret@mongodb:27017
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+    volumes:
+      - mongodb-data:/data/db
+
+volumes:
+  mongodb-data:

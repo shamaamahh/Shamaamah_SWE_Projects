@@ -1,0 +1,7 @@
+flask
+pymongo
+--upgrade certifi
+python-dotenv
+flask_session
+bson
+
